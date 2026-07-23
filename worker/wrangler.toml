@@ -1,21 +1,24 @@
 # Cloudflare Worker configuration for the Noha Directory API.
 #
-# This Worker serves everything under /api/* and /img/*. The React frontend is
-# deployed separately to Cloudflare Pages and talks to this Worker via its URL
-# (set as VITE_API_BASE in the frontend build — see README).
+# This config lives in worker/ (NOT the repo root) on purpose: Cloudflare Pages
+# reads a root-level wrangler.toml and fails if it finds a Worker config (one
+# with `main`). Keeping it here leaves the root clean so Pages can auto-deploy
+# the React frontend from Git.
+#
+# Deploy the Worker from the repo root with:  npm run worker:deploy
+# (which passes  -c worker/wrangler.toml  so paths below resolve correctly).
 #
 # Keep these names consistent across the whole project:
 #   Worker name : noha-directory-api
 #   D1 database : noha-directory
 #   R2 bucket   : noha-images
-#   Editor key  : EDITOR_KEY  (set with `wrangler secret put EDITOR_KEY`)
+#   Editor key  : EDITOR_KEY  (set with `npm run worker:secret`)
 
 name = "noha-directory-api"
-main = "worker/src/index.ts"
+main = "src/index.ts"
 compatibility_date = "2024-09-23"
 
 # --- D1 (SQLite) binding -----------------------------------------------------
-# After `wrangler d1 create noha-directory`, paste the printed database_id here.
 [[d1_databases]]
 binding = "DB"
 database_name = "noha-directory"

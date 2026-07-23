@@ -35,11 +35,19 @@ Keep these identical or things won't wire up:
 
 ## Repo layout
 
+> **Important layout note:** the Worker's `wrangler.toml` lives in `worker/`, **not** the repo
+> root. Cloudflare Pages reads a root-level `wrangler.toml` and fails the build if it finds a
+> Worker config (one with `main`). Keeping it in `worker/` leaves the root clean so Pages can
+> auto-deploy the frontend from Git. All `npm run worker:*` / `db:*` scripts already pass
+> `-c worker/wrangler.toml`.
+
 ```
 .
-├── wrangler.toml          # Worker config: D1 + R2 bindings
+├── worker/
+│   ├── wrangler.toml      # Worker config: D1 + R2 bindings (NOT at repo root)
+│   ├── .dev.vars.example  # local EDITOR_KEY for `wrangler dev`
+│   └── src/index.ts       # the entire API (/api/* and /img/*)
 ├── schema.sql             # D1 schema + seed occasions & themes
-├── worker/src/index.ts    # the entire API (/api/* and /img/*)
 ├── index.html             # PWA meta tags, fonts
 ├── vite.config.ts         # PWA manifest + Workbox caching strategy
 ├── src/                   # React frontend
@@ -67,46 +75,52 @@ npx wrangler login
 # 2. Create the R2 bucket for images
 npx wrangler r2 bucket create noha-images
 
-# 3. Create the D1 database, then paste the printed database_id into wrangler.toml
+# 3. Create the D1 database, then paste the printed database_id into worker/wrangler.toml
 npx wrangler d1 create noha-directory
-#   -> copy "database_id = ..." into wrangler.toml under [[d1_databases]]
+#   -> copy "database_id = ..." into worker/wrangler.toml under [[d1_databases]]
 
 # 4. Apply the schema + seed data to the REMOTE database
-npx wrangler d1 execute noha-directory --remote --file=./schema.sql
+npm run db:apply:remote
 
 # 5. Set the editor passcode (a Worker secret — never in the frontend)
-npx wrangler secret put EDITOR_KEY
+npm run worker:secret
 #   -> type the shared passcode when prompted
 
 # 6. Deploy the Worker (the API)
-npx wrangler deploy
+npm run worker:deploy
 #   -> note the printed URL, e.g. https://noha-directory-api.YOUR-SUBDOMAIN.workers.dev
 ```
 
 ### Lock down CORS (recommended)
 
-`ALLOWED_ORIGINS` in `wrangler.toml` defaults to `*`. Once your Pages site has a URL, set it to
-your real origins and redeploy the Worker, e.g.:
+`ALLOWED_ORIGINS` in `worker/wrangler.toml` defaults to `*`. Once your Pages site has a URL, set
+it to your real origins and redeploy the Worker (`npm run worker:deploy`), e.g.:
 
 ```toml
 [vars]
 ALLOWED_ORIGINS = "https://noha-directory.pages.dev,https://your-custom-domain"
 ```
 
-## Deploy the frontend to Cloudflare Pages
+## Deploy the frontend to Cloudflare Pages (Git auto-deploy)
+
+Because the Worker config lives in `worker/`, the repo root is clean and Pages builds without
+conflict.
 
 1. Push this repo to GitHub/GitLab.
 2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → pick the repo.
+   - Make sure you pick **Pages**, not Workers. (Connecting as a *Worker* would deploy the API
+     again instead of the site.)
 3. Build settings:
    - **Framework preset**: Vite
    - **Build command**: `npm run build`
    - **Build output directory**: `dist`
-4. **Environment variable** → add:
+4. **Environment variables** → add:
    - `VITE_API_BASE` = your Worker URL from step 6 (e.g. `https://noha-directory-api.YOUR-SUBDOMAIN.workers.dev`)
-5. Deploy. Cloudflare Pages serves over HTTPS, which is all the service worker/PWA needs.
+5. Deploy. You get a `https://<project>.pages.dev` URL. Every future `git push` auto-deploys.
 
-The `public/_redirects` file gives the SPA its history-mode fallback so deep links like
-`/noha/<id>` work on refresh.
+`VITE_API_BASE` is read at **build time**, so if you change it you must trigger a fresh Pages
+build (Deployments → Retry deployment, or push a commit). The `public/_redirects` file gives the
+SPA its history-mode fallback so deep links like `/noha/<id>` work on refresh.
 
 ---
 
@@ -116,7 +130,7 @@ Two processes: the Worker (API) and the Vite dev server (frontend).
 
 ```bash
 # --- Worker ---
-cp .dev.vars.example .dev.vars          # set a local EDITOR_KEY (gitignored)
+cp worker/.dev.vars.example worker/.dev.vars   # set a local EDITOR_KEY (gitignored)
 npm run db:apply:local                  # apply schema to the LOCAL D1
 npm run worker:dev                       # -> http://127.0.0.1:8787
 
