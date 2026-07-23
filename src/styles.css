@@ -746,6 +746,45 @@ h3 {
   bottom: 1rem;
   right: 1rem;
   z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+.ios-install-help {
+  position: relative;
+  background: var(--paper);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.9rem 1rem 0.9rem;
+  max-width: min(20rem, calc(100vw - 2rem));
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+.ios-install-help strong {
+  display: block;
+  color: var(--green-deep);
+  margin-bottom: 0.4rem;
+}
+.ios-install-help ol {
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  line-height: 1.5;
+}
+.ios-install-help li {
+  margin-bottom: 0.3rem;
+}
+.ios-install-close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.45rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  line-height: 1;
 }
 
 /* ---- Utilities ---- */

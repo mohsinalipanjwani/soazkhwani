@@ -26,6 +26,21 @@
     />
 
     <title>Noha Directory</title>
+
+    <!-- Capture the install prompt as early as possible: Chrome can fire
+         beforeinstallprompt before React mounts, which would otherwise be missed.
+         The React InstallButton reads window.__deferredInstallPrompt on mount. -->
+    <script>
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault()
+        window.__deferredInstallPrompt = e
+        window.dispatchEvent(new Event('pwa-install-available'))
+      })
+      window.addEventListener('appinstalled', function () {
+        window.__deferredInstallPrompt = null
+        window.dispatchEvent(new Event('pwa-installed'))
+      })
+    </script>
   </head>
   <body>
     <div id="root"></div>
