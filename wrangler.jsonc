@@ -1,0 +1,16 @@
+{
+  // Root config = the FRONTEND, deployed as a Cloudflare Worker that serves the
+  // built static site (Workers Static Assets). This is separate from the API,
+  // whose config lives in worker/wrangler.toml and is deployed on its own.
+  //
+  // Your Git-connected project runs `npx wrangler deploy`, which reads THIS file
+  // and uploads ./dist. Set the project's Build command to `npm run build` and
+  // add a build variable VITE_API_BASE (see README) so the site knows the API URL.
+  "name": "soazkhwani",
+  "compatibility_date": "2024-09-23",
+  "assets": {
+    "directory": "./dist",
+    // Serve index.html for unknown routes so client-side routing (/noha/:id) works.
+    "not_found_handling": "single-page-application"
+  }
+}

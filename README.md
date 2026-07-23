@@ -35,16 +35,19 @@ Keep these identical or things won't wire up:
 
 ## Repo layout
 
-> **Important layout note:** the Worker's `wrangler.toml` lives in `worker/`, **not** the repo
-> root. Cloudflare Pages reads a root-level `wrangler.toml` and fails the build if it finds a
-> Worker config (one with `main`). Keeping it in `worker/` leaves the root clean so Pages can
-> auto-deploy the frontend from Git. All `npm run worker:*` / `db:*` scripts already pass
-> `-c worker/wrangler.toml`.
+> **Two Workers, two configs.** The frontend and API deploy independently:
+> - **`wrangler.jsonc`** (root) — the **site**: a Worker that serves the built `dist/` as static
+>   assets. Deployed by the Git-connected project (`npx wrangler deploy`).
+> - **`worker/wrangler.toml`** — the **API**: the D1/R2-bound Worker. Deployed on its own with
+>   `npm run worker:deploy` (all `worker:*` / `db:*` scripts pass `-c worker/wrangler.toml`).
+>
+> They never interfere because each deploy targets its config explicitly.
 
 ```
 .
+├── wrangler.jsonc         # FRONTEND: serves dist/ as a Worker (Static Assets)
 ├── worker/
-│   ├── wrangler.toml      # Worker config: D1 + R2 bindings (NOT at repo root)
+│   ├── wrangler.toml      # API: D1 + R2 bindings
 │   ├── .dev.vars.example  # local EDITOR_KEY for `wrangler dev`
 │   └── src/index.ts       # the entire API (/api/* and /img/*)
 ├── schema.sql             # D1 schema + seed occasions & themes
@@ -101,26 +104,29 @@ it to your real origins and redeploy the Worker (`npm run worker:deploy`), e.g.:
 ALLOWED_ORIGINS = "https://noha-directory.pages.dev,https://your-custom-domain"
 ```
 
-## Deploy the frontend to Cloudflare Pages (Git auto-deploy)
+## Deploy the frontend (Workers Static Assets, Git auto-deploy)
 
-Because the Worker config lives in `worker/`, the repo root is clean and Pages builds without
-conflict.
+The frontend deploys as its own Worker that serves the built `dist/` folder (config in the root
+`wrangler.jsonc`). A Git-connected **Workers** project builds and deploys it on every push.
 
 1. Push this repo to GitHub/GitLab.
-2. Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → pick the repo.
-   - Make sure you pick **Pages**, not Workers. (Connecting as a *Worker* would deploy the API
-     again instead of the site.)
-3. Build settings:
-   - **Framework preset**: Vite
+2. Cloudflare dashboard → **Workers & Pages → Create → Workers → Import a repository** → pick the repo.
+3. In the project's **Settings → Builds**:
    - **Build command**: `npm run build`
-   - **Build output directory**: `dist`
-4. **Environment variables** → add:
-   - `VITE_API_BASE` = your Worker URL from step 6 (e.g. `https://noha-directory-api.YOUR-SUBDOMAIN.workers.dev`)
-5. Deploy. You get a `https://<project>.pages.dev` URL. Every future `git push` auto-deploys.
+   - **Deploy command**: `npx wrangler deploy` (the default — reads root `wrangler.jsonc`)
+   - **Root directory**: `/`
+4. **Settings → Variables and Secrets** (build/runtime) → add:
+   - `VITE_API_BASE` = your API Worker URL (e.g. `https://noha-directory-api.YOUR-SUBDOMAIN.workers.dev`)
+5. Save and trigger a deploy (push a commit, or **Deployments → Retry**). The site is served at
+   the project's `*.workers.dev` URL (or attach a custom domain).
 
-`VITE_API_BASE` is read at **build time**, so if you change it you must trigger a fresh Pages
-build (Deployments → Retry deployment, or push a commit). The `public/_redirects` file gives the
-SPA its history-mode fallback so deep links like `/noha/<id>` work on refresh.
+`VITE_API_BASE` is read at **build time**, so after changing it you must rebuild (push or retry).
+The root `wrangler.jsonc` sets `not_found_handling: "single-page-application"`, so deep links like
+`/noha/<id>` serve the app shell and client routing takes over.
+
+> Prefer classic **Cloudflare Pages** instead? It also works: delete the root `wrangler.jsonc`,
+> create a **Pages** project (Connect to Git), framework **Vite**, build `npm run build`, output
+> `dist`, and set `VITE_API_BASE`. The `public/_redirects` file provides the SPA fallback there.
 
 ---
 
