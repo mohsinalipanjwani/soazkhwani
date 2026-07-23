@@ -10,7 +10,7 @@
 #   R2 bucket   : noha-images
 #   Editor key  : EDITOR_KEY  (set with `wrangler secret put EDITOR_KEY`)
 
-name = "noha-directory-api"
+name = "soazkhwani"
 main = "worker/src/index.ts"
 compatibility_date = "2024-09-23"
 
