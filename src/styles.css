@@ -1,0 +1,848 @@
+/* =========================================================================
+   Noha Directory — design system
+   Dignified, manuscript-like. Parchment surface, deep green + muted gold.
+   Noto Nastaliq Urdu for Urdu, a serif (EB Garamond / Amiri) for Latin.
+   Mobile-first. Respects prefers-reduced-motion. Visible keyboard focus.
+   ========================================================================= */
+
+:root {
+  /* Palette */
+  --green: #0f4d3c;
+  --green-deep: #0a3529;
+  --green-soft: #1c6b53;
+  --gold: #b08d3f;
+  --gold-soft: #d8bd7a;
+  --gold-muted: #a98b4d;
+  --parchment: #f6efdd;
+  --parchment-deep: #efe4c8;
+  --paper: #fbf7ec;
+  --ink: #2a2419;
+  --ink-soft: #5c5238;
+  --line: #d8cba6;
+  --danger: #9a3324;
+
+  /* Type */
+  --serif: 'EB Garamond', 'Amiri', Georgia, 'Times New Roman', serif;
+  --nastaliq: 'Noto Nastaliq Urdu', 'Gulzar', serif;
+
+  /* Reading size for the reciting view (adjustable via A- / A+) */
+  --recite-size: 2rem;
+
+  --radius: 10px;
+  --shadow: 0 1px 2px rgba(42, 36, 25, 0.08), 0 8px 24px rgba(42, 36, 25, 0.08);
+  --maxw: 900px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--serif);
+  color: var(--ink);
+  background-color: var(--parchment);
+  /* Subtle parchment grain via layered gradients (no external asset) */
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(176, 141, 63, 0.05), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(15, 77, 60, 0.05), transparent 40%);
+  background-attachment: fixed;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Visible keyboard focus everywhere */
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--green-deep);
+}
+
+/* Urdu text: RTL, Nastaliq, generous line height for the script */
+.ur {
+  font-family: var(--nastaliq);
+  direction: rtl;
+  text-align: right;
+  line-height: 2.3;
+  unicode-bidi: plaintext;
+}
+
+/* ---- Layout ---- */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.masthead {
+  background: linear-gradient(180deg, var(--green) 0%, var(--green-deep) 100%);
+  color: var(--paper);
+  border-bottom: 3px solid var(--gold);
+  padding: 0.9rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 2px 10px rgba(10, 53, 41, 0.25);
+}
+.masthead-inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.brand a {
+  color: var(--paper);
+  text-decoration: none;
+}
+.brand .brand-en {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.brand .brand-ur {
+  font-family: var(--nastaliq);
+  font-size: 1.5rem;
+  color: var(--gold-soft);
+  direction: rtl;
+}
+.masthead nav {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 1.25rem 1rem 4rem;
+}
+
+.footer {
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+/* ---- Buttons ---- */
+.btn {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: var(--paper);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+.btn:hover {
+  background: var(--green-soft);
+  text-decoration: none;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--green);
+}
+.btn.ghost:hover {
+  background: rgba(15, 77, 60, 0.08);
+}
+.btn.gold {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #2a2409;
+}
+.btn.gold:hover {
+  background: var(--gold-soft);
+}
+.btn.danger {
+  background: transparent;
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.btn.danger:hover {
+  background: rgba(154, 51, 36, 0.08);
+}
+.btn.small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Buttons in the masthead invert */
+.masthead .btn.ghost {
+  color: var(--paper);
+  border-color: rgba(216, 189, 122, 0.5);
+}
+.masthead .btn.ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ---- Search + filters ---- */
+.searchbar {
+  position: relative;
+  margin-bottom: 1rem;
+}
+.searchbar input {
+  width: 100%;
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--ink);
+}
+.searchbar input::placeholder {
+  color: var(--ink-soft);
+}
+
+.filter-group {
+  margin-bottom: 0.75rem;
+}
+.filter-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 0.35rem;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.chip {
+  font-family: var(--serif);
+  font-size: 0.9rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+.chip:hover {
+  border-color: var(--gold);
+}
+.chip.active {
+  background: var(--green);
+  color: var(--paper);
+  border-color: var(--green);
+}
+.chip .ur {
+  display: inline;
+}
+
+/* ---- Occasion groups + noha cards ---- */
+.group {
+  margin: 1.75rem 0 1rem;
+}
+.group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--gold);
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+.group-head h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.group-count {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.noha-list {
+  display: grid;
+  gap: 0.6rem;
+}
+.noha-card {
+  display: block;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s ease, transform 0.05s ease;
+}
+.noha-card:hover {
+  border-color: var(--gold);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+.noha-card .title-ur {
+  font-family: var(--nastaliq);
+  direction: rtl;
+  text-align: right;
+  font-size: 1.5rem;
+  color: var(--green-deep);
+  line-height: 2;
+}
+.noha-card .title-ro {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--green-deep);
+}
+.noha-card .meta {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+}
+.noha-card .tags {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+.tag {
+  font-size: 0.78rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: var(--parchment-deep);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+}
+.img-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--gold-muted);
+}
+
+/* ---- Empty / error / loading states ---- */
+.state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--ink-soft);
+}
+.state h2 {
+  color: var(--ink);
+}
+.state .emblem {
+  font-size: 2.5rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+.banner {
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+  border: 1px solid;
+}
+.banner.error {
+  background: rgba(154, 51, 36, 0.08);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.banner.info {
+  background: rgba(176, 141, 63, 0.1);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+
+/* ---- Reciting view ---- */
+.recite-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.recite-toolbar .group-btns {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+.toggle {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.toggle button {
+  border: none;
+  background: transparent;
+  font-family: var(--serif);
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+.toggle button.active {
+  background: var(--green);
+  color: var(--paper);
+}
+
+.scroll-surface {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.25rem 2rem;
+  /* faux margins like a manuscript page */
+  background-image: linear-gradient(var(--parchment-deep) 0 0);
+  background-size: 100% 6px;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+.noha-head {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--line);
+}
+.noha-head .title-ur {
+  font-family: var(--nastaliq);
+  direction: rtl;
+  text-align: center;
+  font-size: 2rem;
+  color: var(--green-deep);
+  line-height: 2.2;
+}
+.noha-head .title-ro {
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--green-deep);
+  font-weight: 600;
+}
+.noha-head .meta {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem 1.1rem;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+.noha-head .tags {
+  margin-top: 0.6rem;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.lyrics {
+  white-space: pre-wrap;
+}
+.lyrics.ur {
+  font-size: var(--recite-size);
+  text-align: center;
+}
+.lyrics.ro {
+  font-size: calc(var(--recite-size) * 0.7);
+  text-align: center;
+  line-height: 1.9;
+  color: var(--ink);
+}
+.lyrics-both .lyrics.ro {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px dashed var(--line);
+  color: var(--ink-soft);
+}
+
+.section-label {
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-muted);
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* ---- Image noha ---- */
+.noha-images {
+  display: grid;
+  gap: 1rem;
+}
+.noha-images img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: zoom-in;
+  background: var(--paper);
+}
+
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 53, 41, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+}
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  cursor: zoom-out;
+  border-radius: 6px;
+}
+.lightbox .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+}
+
+/* ---- Forms ---- */
+.form-grid {
+  display: grid;
+  gap: 1rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.field label {
+  font-weight: 600;
+  color: var(--green-deep);
+  font-size: 0.95rem;
+}
+.field .hint {
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+}
+.field input,
+.field select,
+.field textarea {
+  font-family: var(--serif);
+  font-size: 1rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--parchment);
+  color: var(--ink);
+  width: 100%;
+}
+.field textarea {
+  min-height: 6rem;
+  resize: vertical;
+}
+.field input.ur,
+.field textarea.ur {
+  font-family: var(--nastaliq);
+  direction: rtl;
+  text-align: right;
+  font-size: 1.4rem;
+  line-height: 2.2;
+}
+.row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* theme tag editor */
+.theme-editor .selected {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+.theme-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--green);
+  color: var(--paper);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+.theme-tag button {
+  background: none;
+  border: none;
+  color: var(--gold-soft);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0;
+}
+.suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.4rem;
+}
+.suggest .chip.small {
+  font-size: 0.8rem;
+  padding: 0.2rem 0.55rem;
+}
+
+/* image upload area */
+.dropzone {
+  border: 2px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--ink-soft);
+  background: var(--parchment);
+  cursor: pointer;
+}
+.dropzone.drag {
+  border-color: var(--gold);
+  background: rgba(176, 141, 63, 0.08);
+}
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+.thumb {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--paper);
+}
+.thumb img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+}
+.thumb .thumb-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem;
+  gap: 0.2rem;
+}
+.thumb .thumb-actions button {
+  flex: 1;
+  font-size: 0.75rem;
+  padding: 0.2rem;
+  border: none;
+  background: var(--parchment-deep);
+  cursor: pointer;
+  border-radius: 4px;
+}
+.thumb .thumb-actions button.rm {
+  color: var(--danger);
+}
+
+/* ---- Manage occasions list ---- */
+.occ-list {
+  display: grid;
+  gap: 0.5rem;
+}
+.occ-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+}
+.occ-row input {
+  flex: 1;
+  font-family: var(--serif);
+  font-size: 1rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+}
+.occ-row input:focus {
+  background: var(--parchment);
+  border-color: var(--line);
+}
+.occ-row .order-btns {
+  display: flex;
+  flex-direction: column;
+}
+.occ-row .order-btns button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--green);
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0.1rem;
+}
+
+/* ---- Offline indicator / install ---- */
+.offline-bar {
+  background: var(--gold);
+  color: #2a2409;
+  text-align: center;
+  font-size: 0.85rem;
+  padding: 0.35rem 1rem;
+  font-weight: 600;
+}
+.install-fab {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 30;
+}
+
+/* ---- Utilities ---- */
+.mt {
+  margin-top: 1rem;
+}
+.center {
+  text-align: center;
+}
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--line);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 560px) {
+  .row-2 {
+    grid-template-columns: 1fr;
+  }
+  .masthead-inner {
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  .brand {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+  }
+  .masthead nav {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    flex: 1;
+  }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   Print — a clean single-noha PDF, no app chrome.
+   ========================================================================= */
+@media print {
+  .masthead,
+  .footer,
+  .recite-toolbar,
+  .offline-bar,
+  .install-fab,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .content {
+    max-width: none;
+    padding: 0;
+  }
+  .scroll-surface {
+    border: none;
+    box-shadow: none;
+    background: #fff;
+    padding: 0;
+  }
+  .noha-head .title-ur,
+  .noha-head .title-ro,
+  h1,
+  h2,
+  h3 {
+    color: #000;
+  }
+  .noha-images img {
+    box-shadow: none;
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+  .lyrics {
+    page-break-inside: auto;
+  }
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+}

@@ -1,0 +1,3 @@
+# Local-only Worker secrets for `wrangler dev`. Copy to `.dev.vars` (gitignored).
+# In production this is set with `wrangler secret put EDITOR_KEY` instead.
+EDITOR_KEY=changeme-local-passcode

@@ -1,0 +1,33 @@
+# Cloudflare Worker configuration for the Noha Directory API.
+#
+# This Worker serves everything under /api/* and /img/*. The React frontend is
+# deployed separately to Cloudflare Pages and talks to this Worker via its URL
+# (set as VITE_API_BASE in the frontend build — see README).
+#
+# Keep these names consistent across the whole project:
+#   Worker name : noha-directory-api
+#   D1 database : noha-directory
+#   R2 bucket   : noha-images
+#   Editor key  : EDITOR_KEY  (set with `wrangler secret put EDITOR_KEY`)
+
+name = "noha-directory-api"
+main = "worker/src/index.ts"
+compatibility_date = "2024-09-23"
+
+# --- D1 (SQLite) binding -----------------------------------------------------
+# After `wrangler d1 create noha-directory`, paste the printed database_id here.
+[[d1_databases]]
+binding = "DB"
+database_name = "noha-directory"
+database_id = "ae62de05-0db1-48e1-8d76-2bb32611a3d8"
+
+# --- R2 (image storage) binding ---------------------------------------------
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "noha-images"
+
+# --- Public config -----------------------------------------------------------
+# Comma-separated list of origins allowed to call the API (your Pages site and
+# local dev). "*" allows any origin. EDITOR_KEY is a SECRET, not set here.
+[vars]
+ALLOWED_ORIGINS = "*"
