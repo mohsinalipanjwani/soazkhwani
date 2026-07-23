@@ -235,8 +235,82 @@ h3 {
   color: var(--ink-soft);
 }
 
+/* Collapsible filters accordion */
+.filters-accordion {
+  margin-bottom: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  overflow: hidden;
+}
+.filters-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: transparent;
+  border: none;
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--green-deep);
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+}
+.filters-toggle:hover {
+  background: rgba(15, 77, 60, 0.05);
+}
+.filters-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+.filters-toggle .chevron {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  color: var(--gold-muted);
+}
+.filters-toggle .chevron.open {
+  transform: rotate(90deg);
+}
+.filters-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--paper);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.filters-clear {
+  font-size: 0.85rem;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  cursor: pointer;
+}
+.filters-clear:hover {
+  background: rgba(154, 51, 36, 0.08);
+}
+.filters-panel {
+  padding: 0.25rem 0.9rem 0.9rem;
+  border-top: 1px solid var(--line);
+}
+
 .filter-group {
   margin-bottom: 0.75rem;
+}
+.filters-panel .filter-group:first-child {
+  margin-top: 0.75rem;
+}
+.filters-panel .filter-group:last-child {
+  margin-bottom: 0;
 }
 .filter-label {
   font-size: 0.8rem;

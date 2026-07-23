@@ -14,6 +14,7 @@ export default function Fihrist() {
   const [q, setQ] = useState('')
   const [occasion, setOccasion] = useState<string | null>(null)
   const [theme, setTheme] = useState<string | null>(null)
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -76,6 +77,7 @@ export default function Fihrist() {
   }, [nohas, occasions])
 
   const hasFilters = !!q || !!occasion || !!theme
+  const activeFilterCount = (occasion ? 1 : 0) + (theme ? 1 : 0)
   const clearFilters = () => {
     setQ('')
     setOccasion(null)
@@ -94,45 +96,89 @@ export default function Fihrist() {
         />
       </div>
 
-      {occasions.length > 0 && (
-        <div className="filter-group">
-          <div className="filter-label">Occasion</div>
-          <div className="chips">
-            <button
-              className={`chip ${occasion === null ? 'active' : ''}`}
-              onClick={() => setOccasion(null)}
-            >
-              All
-            </button>
-            {[...occasions]
-              .sort((a, b) => a.sort_order - b.sort_order)
-              .map((o) => (
-                <button
-                  key={o.id}
-                  className={`chip ${occasion === o.id ? 'active' : ''}`}
-                  onClick={() => setOccasion(occasion === o.id ? null : o.id)}
-                >
-                  {o.name}
-                </button>
-              ))}
-          </div>
-        </div>
-      )}
-
-      {themes.length > 0 && (
-        <div className="filter-group">
-          <div className="filter-label">Theme</div>
-          <div className="chips">
-            {themes.map((t) => (
-              <button
-                key={t.id}
-                className={`chip ${theme === t.id ? 'active' : ''}`}
-                onClick={() => setTheme(theme === t.id ? null : t.id)}
+      {(occasions.length > 0 || themes.length > 0) && (
+        <div className="filters-accordion">
+          <button
+            className="filters-toggle"
+            aria-expanded={filtersOpen}
+            aria-controls="filters-panel"
+            onClick={() => setFiltersOpen((v) => !v)}
+          >
+            <span className="filters-toggle-label">
+              <span className={`chevron ${filtersOpen ? 'open' : ''}`} aria-hidden>
+                ▸
+              </span>
+              Filters
+              {activeFilterCount > 0 && <span className="filters-badge">{activeFilterCount}</span>}
+            </span>
+            {activeFilterCount > 0 && (
+              <span
+                className="filters-clear"
+                role="button"
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setOccasion(null)
+                  setTheme(null)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation()
+                    setOccasion(null)
+                    setTheme(null)
+                  }
+                }}
               >
-                {t.name}
-              </button>
-            ))}
-          </div>
+                Clear
+              </span>
+            )}
+          </button>
+
+          {filtersOpen && (
+            <div className="filters-panel" id="filters-panel">
+              {occasions.length > 0 && (
+                <div className="filter-group">
+                  <div className="filter-label">Occasion</div>
+                  <div className="chips">
+                    <button
+                      className={`chip ${occasion === null ? 'active' : ''}`}
+                      onClick={() => setOccasion(null)}
+                    >
+                      All
+                    </button>
+                    {[...occasions]
+                      .sort((a, b) => a.sort_order - b.sort_order)
+                      .map((o) => (
+                        <button
+                          key={o.id}
+                          className={`chip ${occasion === o.id ? 'active' : ''}`}
+                          onClick={() => setOccasion(occasion === o.id ? null : o.id)}
+                        >
+                          {o.name}
+                        </button>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {themes.length > 0 && (
+                <div className="filter-group">
+                  <div className="filter-label">Theme</div>
+                  <div className="chips">
+                    {themes.map((t) => (
+                      <button
+                        key={t.id}
+                        className={`chip ${theme === t.id ? 'active' : ''}`}
+                        onClick={() => setTheme(theme === t.id ? null : t.id)}
+                      >
+                        {t.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
