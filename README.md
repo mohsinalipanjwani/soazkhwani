@@ -126,7 +126,9 @@ The root `wrangler.jsonc` sets `not_found_handling: "single-page-application"`, 
 
 > Prefer classic **Cloudflare Pages** instead? It also works: delete the root `wrangler.jsonc`,
 > create a **Pages** project (Connect to Git), framework **Vite**, build `npm run build`, output
-> `dist`, and set `VITE_API_BASE`. The `public/_redirects` file provides the SPA fallback there.
+> `dist`, and set `VITE_API_BASE`. For the SPA fallback there, add a `public/_redirects` file
+> containing `/*  /index.html  200`. (That file is intentionally absent here because Workers
+> Static Assets rejects it — this project uses `not_found_handling` instead.)
 
 ---
 

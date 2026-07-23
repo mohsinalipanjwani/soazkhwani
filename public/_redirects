@@ -1,3 +1,0 @@
-# Cloudflare Pages SPA fallback: every route serves the app shell so deep links
-# like /noha/<id> work on hard refresh. (The API lives on the separate Worker.)
-/*    /index.html   200
