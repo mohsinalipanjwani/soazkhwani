@@ -115,14 +115,14 @@ The frontend deploys as its own Worker that serves the built `dist/` folder (con
    - **Build command**: `npm run build`
    - **Deploy command**: `npx wrangler deploy` (the default — reads root `wrangler.jsonc`)
    - **Root directory**: `/`
-4. **Settings → Variables and Secrets** (build/runtime) → add:
-   - `VITE_API_BASE` = your API Worker URL (e.g. `https://noha-directory-api.YOUR-SUBDOMAIN.workers.dev`)
+4. The API URL is committed in **`.env.production`** (`VITE_API_BASE=...`) and baked in at build
+   time — no dashboard build variable needed. Edit that file if your API URL changes.
 5. Save and trigger a deploy (push a commit, or **Deployments → Retry**). The site is served at
    the project's `*.workers.dev` URL (or attach a custom domain).
 
-`VITE_API_BASE` is read at **build time**, so after changing it you must rebuild (push or retry).
-The root `wrangler.jsonc` sets `not_found_handling: "single-page-application"`, so deep links like
-`/noha/<id>` serve the app shell and client routing takes over.
+`VITE_API_BASE` is read at **build time**, so after changing `.env.production` you must rebuild
+(push or retry). The root `wrangler.jsonc` sets `not_found_handling: "single-page-application"`,
+so deep links like `/noha/<id>` serve the app shell and client routing takes over.
 
 > Prefer classic **Cloudflare Pages** instead? It also works: delete the root `wrangler.jsonc`,
 > create a **Pages** project (Connect to Git), framework **Vite**, build `npm run build`, output
