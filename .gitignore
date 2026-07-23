@@ -11,3 +11,6 @@ dist
 dev.db
 *.log
 *.tsbuildinfo
+
+# Bulk-import source images (kept on disk, not committed)
+scripts/noha-import/images/

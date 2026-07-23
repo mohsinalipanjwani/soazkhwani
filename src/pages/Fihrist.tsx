@@ -15,6 +15,13 @@ export default function Fihrist() {
   const [occasion, setOccasion] = useState<string | null>(null)
   const [theme, setTheme] = useState<string | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+  const toggleGroup = (id: string) =>
+    setExpandedGroups((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -207,21 +214,43 @@ export default function Fihrist() {
           </EmptyState>
         )
       ) : (
-        groups.map((g) => (
-          <section className="group" key={g.id}>
-            <div className="group-head">
-              <h2>{g.name}</h2>
-              <span className="group-count">
-                {g.items.length} {g.items.length === 1 ? 'noha' : 'nohas'}
-              </span>
-            </div>
-            <div className="noha-list">
-              {g.items.map((n) => (
-                <NohaCard key={n.id} noha={n} />
-              ))}
-            </div>
-          </section>
-        ))
+        groups.map((g) => {
+          const count = `${g.items.length} ${g.items.length === 1 ? 'noha' : 'nohas'}`
+          // While searching/filtering, keep every group open so results are visible.
+          // Otherwise groups are collapsed by default and open on demand.
+          const open = hasFilters || expandedGroups.has(g.id)
+          return (
+            <section className="group" key={g.id}>
+              {hasFilters ? (
+                <div className="group-head">
+                  <h2>{g.name}</h2>
+                  <span className="group-count">{count}</span>
+                </div>
+              ) : (
+                <button
+                  className="group-head group-toggle"
+                  aria-expanded={open}
+                  onClick={() => toggleGroup(g.id)}
+                >
+                  <span className="group-head-left">
+                    <span className={`chevron ${open ? 'open' : ''}`} aria-hidden>
+                      ▸
+                    </span>
+                    <h2>{g.name}</h2>
+                  </span>
+                  <span className="group-count">{count}</span>
+                </button>
+              )}
+              {open && (
+                <div className="noha-list">
+                  {g.items.map((n) => (
+                    <NohaCard key={n.id} noha={n} />
+                  ))}
+                </div>
+              )}
+            </section>
+          )
+        })
       )}
     </div>
   )

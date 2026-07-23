@@ -359,6 +359,36 @@ h3 {
   margin-bottom: 0.75rem;
   gap: 1rem;
 }
+/* Collapsible occasion group heading */
+.group-toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--gold);
+  font-family: var(--serif);
+  cursor: pointer;
+  text-align: left;
+  align-items: center;
+}
+.group-toggle:hover {
+  background: rgba(15, 77, 60, 0.04);
+}
+.group-head-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.group-head .chevron,
+.group-toggle .chevron {
+  display: inline-block;
+  transition: transform 0.15s ease;
+  color: var(--gold-muted);
+  font-size: 1rem;
+}
+.group-toggle .chevron.open {
+  transform: rotate(90deg);
+}
 .group-head h2 {
   margin: 0;
   font-size: 1.3rem;
