@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useSearchParams } from 'react-router-dom'
 import { listNohas, listOccasions, listThemes } from '../api'
 import type { Noha, Occasion, Theme } from '../types'
 import { useEditor } from '../editor'
@@ -16,6 +16,28 @@ export default function Fihrist() {
   const [theme, setTheme] = useState<string | null>(null)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set())
+
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  // Deep-link from the Occasions screen: /?occasion=<id> pre-selects & opens filters.
+  useEffect(() => {
+    const occ = searchParams.get('occasion')
+    if (occ) {
+      setOccasion(occ)
+      setFiltersOpen(true)
+    }
+  }, [searchParams])
+
+  // The bottom "Search" tab navigates home with focusSearch intent.
+  useEffect(() => {
+    const st = location.state as { focusSearch?: number } | null
+    if (st?.focusSearch) {
+      searchRef.current?.focus()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [location.state])
   const toggleGroup = (id: string) =>
     setExpandedGroups((prev) => {
       const next = new Set(prev)
@@ -94,13 +116,20 @@ export default function Fihrist() {
   return (
     <div>
       <div className="searchbar">
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search titles, poet, reciter, lyrics, themes…"
-          aria-label="Search nohas"
-        />
+        <div className="search-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Search titles, poet, reciter, lyrics…"
+            aria-label="Search nohas"
+          />
+        </div>
       </div>
 
       {(occasions.length > 0 || themes.length > 0) && (
@@ -260,30 +289,39 @@ function NohaCard({ noha }: { noha: Noha }) {
   const hasImages = noha.images.length > 0
   return (
     <Link className="noha-card" to={`/noha/${noha.id}`}>
-      {noha.title_ur ? (
-        <div className="title-ur">{noha.title_ur}</div>
-      ) : (
-        <div className="title-ro">{noha.title_ro || 'Untitled'}</div>
-      )}
-      {noha.title_ur && noha.title_ro && <div className="title-ro">{noha.title_ro}</div>}
-      <div className="meta">
-        {noha.poet && <span>Shayar: {noha.poet}</span>}
-        {noha.reciter && <span>Noha Khuwan: {noha.reciter}</span>}
+      <div className="noha-card-body">
+        {noha.title_ur ? (
+          <div className="title-ur">{noha.title_ur}</div>
+        ) : (
+          <div className="title-ro">{noha.title_ro || 'Untitled'}</div>
+        )}
+        {noha.title_ur && noha.title_ro && <div className="title-ro">{noha.title_ro}</div>}
+        {(noha.poet || noha.reciter) && (
+          <div className="meta">
+            {noha.poet && <span>Shayar: {noha.poet}</span>}
+            {noha.reciter && <span>Noha Khuwan: {noha.reciter}</span>}
+          </div>
+        )}
+        {(noha.themes.length > 0 || hasImages) && (
+          <div className="tags">
+            {noha.themes.map((t) => (
+              <span className="tag" key={t.id}>
+                {t.name}
+              </span>
+            ))}
+            {hasImages && (
+              <span className="img-badge" title="Image noha">
+                🖼 image
+              </span>
+            )}
+          </div>
+        )}
       </div>
-      {(noha.themes.length > 0 || hasImages) && (
-        <div className="tags">
-          {noha.themes.map((t) => (
-            <span className="tag" key={t.id}>
-              {t.name}
-            </span>
-          ))}
-          {hasImages && (
-            <span className="img-badge" title="Image noha">
-              🖼 image
-            </span>
-          )}
-        </div>
-      )}
+      <span className="row-chevron" aria-hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m9 6 6 6-6 6" />
+        </svg>
+      </span>
     </Link>
   )
 }
